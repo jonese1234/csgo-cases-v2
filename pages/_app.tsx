@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Fragment>
       <Script strategy="lazyOnload" async src="https://www.googletagmanager.com/gtag/js?id=G-LENGWGK7EP"></Script>
-      <Script strategy="lazyOnload">
+      <Script strategy="lazyOnload" id="google-ad">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

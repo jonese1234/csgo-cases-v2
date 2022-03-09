@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json())
+const fetcher = (resource: RequestInfo, init: RequestInit | undefined) => fetch(resource, init).then(res => res.json())
 
 export function GetAllData(){
     const { data, error } = useSWR('https://raw.githubusercontent.com/jonese1234/Csgo-Case-Data/master/latest.json', fetcher)
