@@ -31,6 +31,10 @@ export function GetAllCasesData(){
 
 export function GetCaseData(name: string){
     const { data, isLoading, isError } = GetAllCasesData();
+    console.log(data);
+    console.log(isLoading);
+    console.log(isError);
+
     if(isLoading || isError) {
         return {
             data: data,
