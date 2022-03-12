@@ -1,6 +1,8 @@
 import { GetAllCasesData, GetUpdateTimestamp } from '../shared/api-manager'
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridRowParams, MuiEvent } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
+import { useRouter } from 'next/router'
+import { UrlObject } from 'url';
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -11,7 +13,10 @@ const headers = [
     {
         field: 'name',
         headerName: 'Case Name',
-        flex: 1.5
+        flex: 1.5,
+        headerAlign: 'center' as const,
+        align: 'center' as const,
+        minWidth: 150
     },
     {
         field: 'cost of case',
@@ -21,6 +26,7 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'cost of key',
@@ -30,15 +36,17 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'Average mill-spec',
         type: 'number',
-        headerName: 'Average Mill-spec',
+        headerName: 'Average Mil-spec',
         valueFormatter: ({ value }: { value: any }) => currencyFormatter.format(Number(value)),
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'Average restricted',
@@ -48,6 +56,7 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'Average classified',
@@ -57,6 +66,7 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'Average covert',
@@ -66,6 +76,7 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'Average special',
@@ -75,6 +86,7 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'average return',
@@ -84,6 +96,7 @@ const headers = [
         flex: 1.1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     },
     {
         field: 'roi',
@@ -93,6 +106,7 @@ const headers = [
         flex: 1,
         headerAlign: 'center' as const,
         align: 'center' as const,
+        minWidth: 75
     }
 ]
 
@@ -107,8 +121,16 @@ export function CustomFooter(){
     );
 }
 
+
 function  CaseTable() {
     const { data, isLoading, isError } = GetAllCasesData();
+    const router = useRouter();
+    const navigate = (params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
+        let name = params.row.name.split(' ').join('-');
+        let url = `/case/${name}`;
+        return router.push(url);
+    }
+    
     if (isError) return <div>Failed to load</div>
     if (isLoading) return <div>Loading...</div>
     console.log(data);
@@ -141,10 +163,13 @@ function  CaseTable() {
                     autoHeight
                     hideFooterPagination
                     headerHeight={80}
+                    rowHeight={40}
                     components={{
                         Footer: CustomFooter,
                     }}
+                    onRowDoubleClick={navigate}
                     sx={{
+                        overflow: 'auto', display: 'block',
                         '& .MuiDataGrid-columnHeaderTitle': {
                             textOverflow: "clip",
                             whiteSpace: "break-spaces",

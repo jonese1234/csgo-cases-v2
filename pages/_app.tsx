@@ -20,7 +20,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           });
         `}
       </Script>
+      <Header></Header>
       <Component {...pageProps} />
+      <Footer></Footer>
     </Fragment>
   )
 }
