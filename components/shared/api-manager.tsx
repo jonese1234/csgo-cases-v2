@@ -39,6 +39,14 @@ export function GetCaseData(name: string){
         }
     }
 
+    if(data == null){
+        return {
+            data: null,
+            isLoading: true,
+            isError: isError
+        }
+    }
+
     if (data[name]){
         return {
             data: data[name],
@@ -50,7 +58,7 @@ export function GetCaseData(name: string){
     return {
         data: null,
         isLoading: isLoading,
-        isError: true
+        isError: isError
     }
 }
 

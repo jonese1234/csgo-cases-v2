@@ -16,9 +16,9 @@ function CasePage() {
     let cn = caseName as string;
     var replaced = cn.split('-').join(' ');
     const { data, isLoading, isError } = GetCaseData(replaced as string);
-    
-    if(isError) return <Error statusCode={404} />
+
     if (isLoading) return <div>Loading...</div>
+    if(isError) return <Error statusCode={404} />
 
     let c = CaseMapper(data);
     console.log(c);
