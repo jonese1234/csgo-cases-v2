@@ -133,7 +133,6 @@ function  CaseTable() {
     
     if (isError) return <div>Failed to load</div>
     if (isLoading) return <div>Loading...</div>
-    console.log(data);
     let rows = [];
     let i = 1;
     for (const x in data) {
@@ -152,7 +151,6 @@ function  CaseTable() {
         })
         i++;
     }
-    console.log(rows)
     return (
         <div style={{ display: 'flex', height: '100%' }}>
             <div style={{flexGrow: 1 }}>
