@@ -11,6 +11,7 @@ import Head from "next/head";
 function CasePage() {
     const router = useRouter();
     const { caseName } = router.query;
+    console.log("Page", caseName)
     if(caseName === undefined) return <div>Loading...</div>
 
     let cn = caseName as string;
