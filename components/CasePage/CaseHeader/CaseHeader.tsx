@@ -1,6 +1,7 @@
-import { Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Box } from "@mui/material";
 import { Case } from "../models/case.model";
 import styles from '../../../styles/case.module.css'
+import { GetUpdateTimestamp } from "../../shared/api-manager";
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -14,11 +15,18 @@ const priceFormnat = (price: number) => {
     return currencyFormatter.format(price);
 }
 
-function CaseHeader({data}: {data: Case}) {
-
+function CaseHeader({caseData}: {caseData: Case}) {
+    const { data, isLoading, isError } = GetUpdateTimestamp();
+    if (isError) return <div>Failed to load</div>
+    if (isLoading) return <div>Loading...</div>
     return (
         <div className={styles.tableheader}>
-            <h1>{data.name}</h1>
+            <h1>{caseData.name}</h1>
+            <Box sx={{ padding: '10px', display: 'flex' }}>
+                <i>
+                    Sources: <a href="https://github.com/jonese1234/Csgo-Case-Data" target="_blank" rel="noopener noreferrer">Csgo Case Data</a> &amp; <a href="https://csgobackpack.net/api/" target="_blank" rel="noopener noreferrer">Csgo Backpack.net</a>. Data is current as of {data} UTC.
+                </i>
+            </Box>
             <Table sx={{ 
                 minWidth: 200, 
                 overflow: 'auto', 
@@ -40,15 +48,15 @@ function CaseHeader({data}: {data: Case}) {
                 </TableHead>
                 <TableBody>
                     <TableRow>
-                        <TableCell align="center">{priceFormnat(Number(data["cost of case"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["cost of key"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["Average mill-spec"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["Average restricted"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["Average classified"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["Average covert"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["Average special"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data["average return"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(data.roi))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["cost of case"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["cost of key"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["Average mill-spec"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["Average restricted"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["Average classified"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["Average covert"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["Average special"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData["average return"]))}</TableCell>
+                        <TableCell align="center">{priceFormnat(Number(caseData.roi))}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
