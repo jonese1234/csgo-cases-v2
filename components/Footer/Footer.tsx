@@ -12,7 +12,7 @@ function Footer() {
                     variant={'caption'}
                     color={'textSecondary'}
                     >
-                    Designed by Rhys Jones © <Link href="https://jonesy.moe">Jonesy.moe</Link> {(new Date()).getFullYear()} All right reserved
+                    Designed by Rhys Jones © <Link href="https://jonesy.moe">Jonesy.moe</Link> {(new Date()).getFullYear()} All right reserved | <Link href="/sitemap.xml">Sitemap</Link>
                     </Typography>
                 </Box>
             </Box>

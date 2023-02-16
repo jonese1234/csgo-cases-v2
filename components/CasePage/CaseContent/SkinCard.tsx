@@ -1,4 +1,4 @@
-import { Card, CardMedia, CardContent, Typography, CardActions, Button, CardHeader, Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material";
+import { Card, CardMedia, CardContent, Typography, CardActions, Button, CardHeader, Table, TableBody, TableCell, TableHead, TableRow, Link} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Rarity, Skin } from "../models/case.model";
 
@@ -47,6 +47,7 @@ function SkinCard({skin}: {skin: Skin}) {
     const styles = useStyles();
     let wears = ["FN", "MW", "FT", "WW" ,"BS"]
     let rows: SkinRow[] = [];
+    let searchUrl = `https://steamcommunity.com/market/search?appid=730&q=${skin.name}`
 
     for (const id in wears){
         let wear = wears[id];
@@ -63,7 +64,9 @@ function SkinCard({skin}: {skin: Skin}) {
     return (
         <Card sx={{ maxWidth: 345 }}>
             <CardHeader
-                title={skin.name}
+                title={
+                    <a href={searchUrl} target="_blank" rel="noopener noreferrer">{skin.name}</a>
+                }
                 subheader={skin.rarity}
                 className={styles.ribbon}
                 sx = {{ "backgroundColor": headerColour(skin.rarity as Rarity)}}
