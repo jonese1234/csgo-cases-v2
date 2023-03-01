@@ -1,8 +1,12 @@
 import { GetAllCasesData, GetUpdateTimestamp } from '../shared/api-manager'
-import { DataGrid, GridCallbackDetails, GridRowParams, MuiEvent } from '@mui/x-data-grid';
-import { Box } from '@mui/material';
+import { DataGrid, GridCallbackDetails, GridFilterModel, GridRowParams, MuiEvent } from '@mui/x-data-grid';
+import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { useRouter } from 'next/router'
 import { UrlObject } from 'url';
+import { createContext, useContext, useState } from 'react';
+import { FilterContext } from '../Contexts/MarketContext';
+import { CustomFooter } from '../shared/sources-and-market-select';
+
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -107,19 +111,18 @@ const headers = [
         headerAlign: 'center' as const,
         align: 'center' as const,
         minWidth: 75
+    },
+    {
+        field: 'market',
+        headerName: 'market',
+        flex: 1,
+        headerAlign: 'center' as const,
+        align: 'center' as const,
+        minWidth: 75
     }
 ]
 
-export function CustomFooter(){
-    const { data, isLoading, isError } = GetUpdateTimestamp();
-    if (isError) return <div>Failed to load</div>
-    if (isLoading) return <div>Loading...</div>
-    return(
-        <Box sx={{ padding: '10px', display: 'flex' }}>
-            <i>Sources: <a href="https://github.com/jonese1234/Csgo-Case-Data" target="_blank" rel="noopener noreferrer">Csgo Case Data</a> &amp; <a href="https://csgobackpack.net/api/" target="_blank" rel="noopener noreferrer">Csgo Backpack.net</a>. Data is current as of {data} UTC</i>
-        </Box>
-    );
-}
+const defaultMarket = "Steam";
 
 
 function  CaseTable() {
@@ -129,54 +132,97 @@ function  CaseTable() {
         let name = params.row.name.split(' ').join('-');
         let url = `/case/${name}`;
         return router.push(url);
-    }
+    }   
+
+    const [filters, setFilters] = useState<GridFilterModel>({
+        items:[
+            {
+                columnField: 'market',
+                operatorValue: 'equals',
+                value: defaultMarket
+            }
+        ]
+    }); 
     
     if (isError) return <div>Failed to load</div>
-    if (isLoading) return <div>Loading...</div>
+    if (isLoading) {
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center'
+                }}>
+              <CircularProgress />
+            </Box>
+          );
+    }
     let rows = [];
     let i = 1;
+    
     for (const x in data) {
-        rows.push({
-            'id': i,
-            'name': data[x]['name'],
-            'cost of case': data[x]['cost of case'],
-            'cost of key': data[x]['cost of key'],
-            'Average mill-spec': data[x]['Average mill-spec'],
-            'Average restricted': data[x]['Average restricted'],
-            'Average classified': data[x]['Average classified'],
-            'Average covert': data[x]['Average covert'],
-            'Average special': data[x]['Average special'],
-            'average return': data[x]['average return'],
-            'roi': data[x]['roi']
-        })
-        i++;
+        let marketPlaces = data[x]['MarketPlaces'];
+        for (const y in marketPlaces){
+            let market = marketPlaces[y];
+            rows.push({
+                'id': i,
+                'name': data[x]['Name'],
+                'cost of case': data[x]['Cost'],
+                'cost of key': data[x]['KeyCost'],
+                'market': market['Name'],
+                'Average mill-spec': market['Average']['Milspec'],
+                'Average restricted': market['Average']['Restricted'],
+                'Average classified': market['Average']['Classified'],
+                'Average covert': market['Average']['Covert'],
+                'Average special': market['Average']['Special'],
+                'average return': market['Average']['Return'],
+                'roi': market['Average']['ROI']
+            })
+            i++
+        }
     }
+    console.log(rows);
+
     return (
-        <div style={{ display: 'flex', height: '100%' }}>
-            <div style={{flexGrow: 1 }}>
-                <DataGrid
-                    rows={rows}
-                    columns={headers}
-                    disableColumnMenu
-                    autoHeight
-                    hideFooterPagination
-                    headerHeight={80}
-                    rowHeight={40}
-                    components={{
-                        Footer: CustomFooter,
-                    }}
-                    onRowDoubleClick={navigate}
-                    sx={{
-                        overflow: 'auto', display: 'block',
-                        '& .MuiDataGrid-columnHeaderTitle': {
-                            textOverflow: "clip",
-                            whiteSpace: "break-spaces",
-                            lineHeight: 1.5
+        <FilterContext.Provider value={{ filters, setFilters }}>
+            <div style={{ display: 'flex', height: '100%' }}>
+                <div style={{flexGrow: 1 }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={headers}
+                        disableColumnMenu
+                        autoHeight
+                        hideFooterPagination
+                        headerHeight={80}
+                        rowHeight={40}
+                        filterModel={filters}
+                        onFilterModelChange={(newFilterModel) => {
+                                setFilters(newFilterModel)
+                            }
                         }
-                    }}
-                />
+                        components={{
+                            Footer: CustomFooter,
+                        }}
+                        onRowDoubleClick={navigate}
+                        sx={{
+                            overflow: 'auto', display: 'block',
+                            '& .MuiDataGrid-columnHeaderTitle': {
+                                textOverflow: "clip",
+                                whiteSpace: "break-spaces",
+                                lineHeight: 1.5
+                            }
+                        }}
+                        initialState={{
+                            columns: {
+                                columnVisibilityModel: {
+                                market: false
+                                },
+                            }
+                        }}
+                    />
+                </div>
             </div>
-        </div>
+        </FilterContext.Provider>
     );
 }
 

@@ -52,7 +52,7 @@ function SkinCard({skin}: {skin: Skin}) {
     for (const id in wears){
         let wear = wears[id];
         let normal = skin.prices[wear] ?? undefined;
-        let st = skin.prices[`ST ${wear}`] ?? undefined;
+        let st = skin.prices[`ST${wear}`] ?? undefined;
         let row: SkinRow = {
             name: wear,
             stPrice: st,

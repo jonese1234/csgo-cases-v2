@@ -1,3 +1,6 @@
+import { useContext } from "react";
+import { FilterContext } from "../../Contexts/MarketContext";
+
 export interface Case {
     name:                 string;
     "cost of case":       number;
@@ -21,7 +24,7 @@ export interface Skin {
 
 export enum Rarity {
     Classified = "Classified",
-    MilSpecGrade = "Mil-Spec Grade",
+    MilSpecGrade = "Milspec",
     Restricted = "Restricted",
     Covert = "Covert",
     Special = "Special",
@@ -40,33 +43,37 @@ export enum Wear {
     Ww = "WW",
 }
 
-export function CaseMapper(jsonObject: any): Case {
+export function CaseMapper(jsonObject: any, marketName: string): Case {
+    // Find market
+    let market = jsonObject.MarketPlaces.find((item: { Name: string; }) => {
+        return item.Name == marketName
+    })
+
     let result: Case = {
-        name: jsonObject['name'],
-        "cost of case": jsonObject['cost of case'],
-        "cost of key": jsonObject['cost of key'],
-        "average return": jsonObject['average return'],
-        "Average mill-spec": jsonObject['Average mill-spec'],
-        "Average restricted": jsonObject['Average restricted'],
-        "Average classified": jsonObject['Average classified'],
-        "Average covert": jsonObject['Average covert'],
-        "Average special": jsonObject['Average special'],
-        roi: jsonObject['roi'],
+        name: jsonObject['Name'],
+        "cost of case": jsonObject['Cost'],
+        "cost of key": jsonObject['KeyCost'],
+        "average return": market['Average']['Return'],
+        "Average mill-spec": market['Average']['Milspec'],
+        "Average restricted": market['Average']['Restricted'],
+        "Average classified": market['Average']['Classified'],
+        "Average covert": market['Average']['Covert'],
+        "Average special": market['Average']['Special'],
+        roi: market['Average']['ROI'],
         "skin values": [],
     };
 
-    for (const id in jsonObject['skin values']){
-        let _data = jsonObject['skin values'][id];
-        let name = Object.keys(_data)[0];
-        let data = _data[name];
+    for (const id in market['Skins']){
+        let _data = market['Skins'][id];
+        let name = _data["Name"];
+        let data = _data;
         let skin: Skin = {
             name: name,
             wears: data["wears"] as Wear[],
-            prices: data["prices"],
-            rarity: data["rarity"] as Rarity
+            prices: data["Price"],
+            rarity: data["Rarity"] as Rarity
         };
         result["skin values"].push(skin);
     }
-
     return result;
 }

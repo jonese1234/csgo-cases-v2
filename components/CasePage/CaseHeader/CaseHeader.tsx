@@ -2,6 +2,7 @@ import { Table, TableHead, TableRow, TableCell, TableBody, Box } from "@mui/mate
 import { Case } from "../models/case.model";
 import styles from '../../../styles/case.module.css'
 import { GetUpdateTimestamp } from "../../shared/api-manager";
+import { CustomFooter } from "../../shared/sources-and-market-select";
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -23,9 +24,7 @@ function CaseHeader({caseData}: {caseData: Case}) {
         <div className={styles.tableheader}>
             <h1>{caseData.name}</h1>
             <Box sx={{ padding: '10px', display: 'flex' }}>
-                <i>
-                    Sources: <a href="https://github.com/jonese1234/Csgo-Case-Data" target="_blank" rel="noopener noreferrer">Csgo Case Data</a> &amp; <a href="https://csgobackpack.net/api/" target="_blank" rel="noopener noreferrer">Csgo Backpack.net</a>. Data is current as of {data} UTC.
-                </i>
+                <CustomFooter></CustomFooter>
             </Box>
             <Table sx={{ 
                 minWidth: 200, 
@@ -56,7 +55,7 @@ function CaseHeader({caseData}: {caseData: Case}) {
                         <TableCell align="center">{priceFormnat(Number(caseData["Average covert"]))}</TableCell>
                         <TableCell align="center">{priceFormnat(Number(caseData["Average special"]))}</TableCell>
                         <TableCell align="center">{priceFormnat(Number(caseData["average return"]))}</TableCell>
-                        <TableCell align="center">{priceFormnat(Number(caseData.roi))}</TableCell>
+                        <TableCell align="center">{Number(caseData.roi).toFixed(2)}%</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

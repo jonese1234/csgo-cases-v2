@@ -7,9 +7,22 @@ import CaseWrapper from "../../components/CasePage/CaseContent/CaseWrapper";
 import styles from '../../styles/case.module.css'
 import Head from "next/head";
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { FilterContext } from "../../components/Contexts/MarketContext";
+import { useState } from "react";
+import { GridFilterModel } from "@mui/x-data-grid";
 
 
 function CasePage() {
+    const [filters, setFilters] = useState<GridFilterModel>({
+        items:[
+            {
+                columnField: 'market',
+                operatorValue: 'equals',
+                value: 'Steam'
+            }
+        ]
+    }); 
+    
     const router = useRouter();
     const { caseName } = router.query;
     if(caseName === undefined) return <div>Loading...</div>
@@ -19,20 +32,24 @@ function CasePage() {
     const { data, isLoading, isError } = GetCaseData(replaced as string);
     if (isLoading) return <div>Loading...</div>
     if(isError) return <Error statusCode={404} />
-    let c = CaseMapper(data);
+
+    let marketName = filters.items[0].value;
+    let c = CaseMapper(data, marketName);
 
     return(
-        <div className={styles.background}>
-                  <Head>
-                    <title>{c.name}</title>
-                    <meta name="description" content={c.name}/>
-                    <link rel="icon" href="/favicon.ico" />
-                </Head>
-            <main className={styles.container}>
-                <CaseHeader caseData={c}></CaseHeader>
-                <CaseWrapper data={c}></CaseWrapper>
-            </main>
-        </div>
+        <FilterContext.Provider value={{ filters, setFilters }}>
+            <div className={styles.background}>
+                    <Head>
+                        <title>{c.name}</title>
+                        <meta name="description" content={c.name}/>
+                        <link rel="icon" href="/favicon.ico" />
+                    </Head>
+                <main className={styles.container}>
+                    <CaseHeader caseData={c}></CaseHeader>
+                    <CaseWrapper data={c}></CaseWrapper>
+                </main>
+            </div>
+        </FilterContext.Provider>
     );
 }
 
