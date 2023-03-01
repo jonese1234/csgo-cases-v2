@@ -56,10 +56,10 @@ function CasePage() {
 export const getStaticPaths: GetStaticPaths = async () => {
     const res = await fetch('https://raw.githubusercontent.com/jonese1234/Csgo-Case-Data/master/latest.json');
     const posts = await res.json();
-    const data = posts['cases'];
+    const data = posts['Cases'];
     let paths = [];
     for (const x in data) {
-        paths.push({params: { caseName: (data[x]['name']).split(' ').join('-') }});
+        paths.push({params: { caseName: (data[x]['Name']).split(' ').join('-') }});
     }
     return { paths, fallback: false };
 };
